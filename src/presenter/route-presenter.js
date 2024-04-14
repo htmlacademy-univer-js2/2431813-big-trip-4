@@ -1,24 +1,27 @@
 import { render } from '../render.js';
-import EventListView from '../view/event-list-view.js';
+import PointListView from '../view/point-list-view.js';
 import EditPointView from '../view/edit-point-view.js';
 import PointView from '../view/point-view.js';
 import SortView from '../view/sort-view.js';
+import AddPointView from '../view/add-point-view.js';
 
-export default class RoutePresenter {
-  eventComponent = new EventListView();
+export default class Presenter {
+  pointComponent = new PointListView();
 
-  constructor({ container }) {
+  constructor({ container, pointsModel }) {
     this.container = container;
+    this.pointsModel = pointsModel;
   }
 
   init() {
+    this.points = [...this.pointsModel.getPoints()];
     render(new SortView(), this.container);
-    render(this.eventComponent, this.container);
+    render(this.pointComponent, this.container);
 
-    render(new EditPointView, this.eventComponent.getElement());
-
-    for (let i = 0; i < 3; i++) {
-      render(new PointView, this.eventComponent.getElement());
+    render(new AddPointView(), this.pointComponent.getElement());
+    render(new EditPointView({point: this.points[0]}), this.pointComponent.getElement());
+    for (let i = 1; i < this.points.length; i++) {
+      render(new PointView({point: this.points[i]}), this.pointComponent.getElement());
     }
   }
 }
