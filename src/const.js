@@ -33,12 +33,19 @@ const RANDOM_PICTURE = [
   'https://loremflickr.com/248/152?random=123'
 ];
 
+const FilterType = {
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+  PRESENT: 'present',
+  PAST: 'past'
+};
+
 const DATE_FORMAT_HOURS = 'hh:mm';
 const DATE_FORMAT_DAY = 'MM DD';
 const DATE_FORMAT_EDIT = 'DD/MM/YY hh:mm';
 
 export { TYPES, DESTINATIONS,
   FILLER_TEXT, RANDOM_PICTURE,
-  DATE_FORMAT_HOURS,
+  FilterType, DATE_FORMAT_HOURS,
   DATE_FORMAT_DAY, DATE_FORMAT_EDIT
 };

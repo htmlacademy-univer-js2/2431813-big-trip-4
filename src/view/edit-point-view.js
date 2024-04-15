@@ -1,4 +1,4 @@
-import { humanizeDueDate } from '../utils.js';
+import { humanizeDueDate } from '../utils/main-utils.js';
 import { mockOffers } from '../mock/offer.js';
 import { mockDestinations } from '../mock/destination.js';
 import { DATE_FORMAT_EDIT } from '../const.js';
