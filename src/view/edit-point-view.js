@@ -1,8 +1,8 @@
-import { createElement } from '../render.js';
 import { humanizeDueDate } from '../utils.js';
 import { mockOffers } from '../mock/offer.js';
 import { mockDestinations } from '../mock/destination.js';
 import { DATE_FORMAT_EDIT } from '../const.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 function getPointTypeOffer(event) {
   return mockOffers.find((offer) => offer.type === event.type);
@@ -168,24 +168,25 @@ function addEditPointView(event) {
   );
 }
 
-export default class EditPointView {
-  constructor({point}) {
-    this.point = point;
+export default class EditEventView extends AbstractView {
+  #point = null;
+  #handleClick = null;
+
+  constructor({ point, onClick}) {
+    super();
+    this.#point = point;
+    this.#handleClick = onClick;
+
+    this.element.querySelector('.event--edit').addEventListener('submit', this.#clickHandler);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#clickHandler);
   }
 
-  getTemplate() {
-    return addEditPointView(this.point);
+  get template() {
+    return addEditPointView(this.#point);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
-  }
+  #clickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleClick();
+  };
 }
