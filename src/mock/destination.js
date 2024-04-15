@@ -1,4 +1,4 @@
-import { getRandomArrayElement } from '../utils.js';
+import { getRandomArrayElement } from '../utils/main-utils.js';
 import { DESTINATIONS, FILLER_TEXT, RANDOM_PICTURE } from '../const.js';
 
 

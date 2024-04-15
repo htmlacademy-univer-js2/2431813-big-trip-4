@@ -15,7 +15,7 @@ const presenter = new Presenter({
   pointsModel,
 });
 
-render(new TripInfoView(), siteMainElement, RenderPosition.AFTERBEGIN);
+render(new TripInfoView({pointsModel}), siteMainElement, RenderPosition.AFTERBEGIN);
 render(new FilterView(), siteFilterElement);
 
 presenter.init();
