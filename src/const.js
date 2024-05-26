@@ -1,3 +1,5 @@
+import { Offers, getOffersId } from './mock/offers';
+
 const TYPES = [
   'Taxi',
   'Bus',
@@ -35,7 +37,7 @@ const DATES = [
 
 const BLANC_TEST =
 {
-  type: null,
+  type: 'Taxi',
   destination: null,
   cost: 0,
   date: {
@@ -45,14 +47,15 @@ const BLANC_TEST =
   offers: {
     id: 0
   },
+  activeOffers:
+    Offers[getOffersId('default')],
   desctiption:'',
-  photosSrc: []
+  photosSrc: ['https://loremflickr.com/320/240']
 };
 
 const DATE_FORMAT_EDIT = 'DD/MM/YY hh:mm';
 const DATE_FORMAT_POINT_DAY = 'MMM DD';
 const DATE_FORMAT_POINT_HOURS = 'hh-mm';
-
 const PHOTOS_COUNT = 20;
 const MAX_PRICE = 2000;
 const MAX_OFFER_ID = 5;
@@ -71,6 +74,25 @@ const PresenterModes = {
   EDITING: 'EDITING',
 };
 
+const UserActions = {
+  UPDATE_POINT: 'update',
+  ADD_POINT: 'add',
+  DELETE_POINT: 'delete',
+};
+
+
+const UpdateTypes = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
+const FilterTypes = {
+  ALL: 'everything',
+  FUTURE: 'future',
+  PRESENT: 'present',
+  PAST: 'past',
+};
 
 export {PresenterModes, MAX_PRICE,
   MAX_OFFER_ID,PHOTOS_COUNT,
@@ -78,4 +100,5 @@ export {PresenterModes, MAX_PRICE,
   DATE_FORMAT_EDIT, DATE_FORMAT_POINT_DAY,
   DATE_FORMAT_POINT_HOURS, BLANC_TEST,
   POINTS_COUNT, DATES,
-  SortTypes};
+  SortTypes, FilterTypes,
+  UserActions, UpdateTypes};

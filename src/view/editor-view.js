@@ -17,38 +17,47 @@ const createOptions = (type) =>
   `<div class="event__type-list">
   <fieldset class="event__type-group">
     <legend class="visually-hidden">Event type</legend>
+
     <div class="event__type-item">
       <input id="event-type-taxi-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi" ${'taxi' === type ? 'checked' : ''}>
       <label class="event__type-label  event__type-label--taxi" for="event-type-taxi-1">Taxi</label>
     </div>
+
     <div class="event__type-item">
       <input id="event-type-bus-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="bus" ${'bus' === type ? 'checked' : ''}>
       <label class="event__type-label  event__type-label--bus" for="event-type-bus-1">Bus</label>
     </div>
+
     <div class="event__type-item">
       <input id="event-type-train-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train" ${'train' === type ? 'checked' : ''}>
       <label class="event__type-label  event__type-label--train" for="event-type-train-1">Train</label>
     </div>
+
     <div class="event__type-item">
       <input id="event-type-ship-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship" ${'ship' === type ? 'checked' : ''}>
       <label class="event__type-label  event__type-label--ship" for="event-type-ship-1">Ship</label>
     </div>
+
     <div class="event__type-item">
       <input id="event-type-drive-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="drive" ${'drive' === type ? 'checked' : ''}>
       <label class="event__type-label  event__type-label--drive" for="event-type-drive-1">Drive</label>
     </div>
+
     <div class="event__type-item">
       <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" ${'flight' === type ? 'checked' : ''}>
       <label class="event__type-label  event__type-label--flight" for="event-type-flight-1">Flight</label>
     </div>
+
     <div class="event__type-item">
       <input id="event-type-check-in-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="check-in" ${'check-in' === type ? 'checked' : ''}>
       <label class="event__type-label  event__type-label--check-in" for="event-type-check-in-1">Check-in</label>
     </div>
+
     <div class="event__type-item">
       <input id="event-type-sightseeing-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="sightseeing" ${'sightseeing' === type ? 'checked' : ''}>
       <label class="event__type-label  event__type-label--sightseeing" for="event-type-sightseeing-1">Sightseeing</label>
     </div>
+
     <div class="event__type-item">
       <input id="event-type-restaurant-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="restaurant" ${'restaurant' === type ? 'checked' : ''}>
       <label class="event__type-label  event__type-label--restaurant" for="event-type-restaurant-1">Restaurant</label>
@@ -64,11 +73,12 @@ const createDistOpt = (destination) => {
   return res;
 };
 
-const createDESTINATIONS = (type, destination) =>
+const createDestinations = (type, destination) =>
   `<div class="event__field-group  event__field-group--destination">
   <label class="event__label  event__type-output" for="event-destination-1">
     ${type}
   </label>
+
   <select class="event__input  event__input--destination" type="text" selected="${destination} id="destination-list-1">
     ${createDistOpt(destination)}
   
@@ -110,6 +120,9 @@ const createEditorView = ({type, destination, cost, date, desctiption, photosSrc
     <li><form class="event event--edit" action="#" method="post">
     <header class="event__header">
       <div class="event__type-wrapper">
+        <label class="event__type  event__type-btn" for="event-type-toggle-1">
+          <span class="visually-hidden">Choose event type</span>
+          <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
         </label>
         <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
     
@@ -117,7 +130,7 @@ const createEditorView = ({type, destination, cost, date, desctiption, photosSrc
         
       </div>
     
-      ${createDESTINATIONS(type, destination)}
+      ${createDestinations(type, destination)}
     
       <div class="event__field-group  event__field-group--time">
         <label class="visually-hidden" for="event-start-time-1">From</label>
@@ -136,10 +149,14 @@ const createEditorView = ({type, destination, cost, date, desctiption, photosSrc
       </div>
     
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-      <button class="event__reset-btn" type="reset">Cancel</button>
+      <button class="event__reset-btn" type="reset">Delete</button>
+      <button class="event__rollup-btn" type="button">
+        <span class="visually-hidden">Open event</span>
+      </button>
     </header>
     <section class="event__details">
       ${createOffersEdit(activeOffers)}
+
     
       <section class="event__section  event__section--destination">
         <h3 class="event__section-title  event__section-title--destination">Destination</h3>
@@ -154,21 +171,27 @@ const createEditorView = ({type, destination, cost, date, desctiption, photosSrc
     </section>
     </form>
     </li>
+
+
     `
   );
 export default class EditorView extends AbstractStatefulView{
-  #editClick;
-  #onPointChange;
+  #onSubmit;
   #datepickerFrom;
   #datepickerTo;
-  constructor({point = BLANC_TEST, onEditClick, onPointChange}) {
+  #deletePoint;
+  #point;
+
+  constructor({point = BLANC_TEST, onSubmit, deletePoint}) {
     super();
     this._setState(EditorView.parsePointToState(point));
 
-    this.#onPointChange = onPointChange;
-    this.#editClick = onEditClick;
+    this.#onSubmit = onSubmit;
 
     this._restoreHandlers();
+
+    this.#point = point;
+    this.#deletePoint = deletePoint;
 
   }
 
@@ -237,10 +260,13 @@ export default class EditorView extends AbstractStatefulView{
       .addEventListener('input', this.#onPriceInput);
 
     this.element
+      .querySelector('.event__reset-btn')
+      .addEventListener('click', this.#onDeleteButtonClick);
+
+    this.element
       .addEventListener('submit', this.#onFormSubmit);
 
-
-    this.element.querySelector('.event__reset-btn')
+    this.element.querySelector('.event__rollup-btn')
       .addEventListener('click', this.#onFormClose);
 
     this.element.querySelector('.event__input--destination')
@@ -253,6 +279,7 @@ export default class EditorView extends AbstractStatefulView{
     checkboxOffers.forEach((checkbox) => {
       checkbox.addEventListener('change', this.#onOffersChange);
     });
+
     this.#setDatepickers();
   }
 
@@ -287,17 +314,27 @@ export default class EditorView extends AbstractStatefulView{
     });
   };
 
+  reset(point) {
+    this.updateElement(
+      EditorView.parsePointToState(point),
+    );
+  }
 
   #onFormClose = (evt) => {
     evt.preventDefault();
-    this.#editClick(this._state);
+    this.reset(this.#point);
+    this.#onSubmit();
+  };
+
+  #onDeleteButtonClick = (evt) => {
+    evt.preventDefault();
+    this.#deletePoint(EditorView.parseStateToPoint(this._state));
   };
 
   #onFormSubmit = (evt) => {
     evt.preventDefault();
+    this.#onSubmit(EditorView.parseStateToPoint(this._state));
     this.#onFormClose(evt);
-
-    this.#onPointChange(EditorView.parseStateToPoint(this._state));
   };
 
   #onDestinationChange = (evt) => {
@@ -306,10 +343,13 @@ export default class EditorView extends AbstractStatefulView{
     });
   };
 
-  #onPriceInput = (evt) =>{
-    this.updateElement({
-      cost: evt.target.value,
-    });
+  #onPriceInput = (evt) => {
+    const regex = /^\d{1,6}$/;
+    if (regex.test(evt.target.value)) {
+      this.updateElement({
+        cost: evt.target.value,
+      });
+    }
   };
 
   static parsePointToState(point){
