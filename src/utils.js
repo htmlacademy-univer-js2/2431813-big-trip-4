@@ -1,7 +1,15 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import relativetime from 'dayjs/plugin/relativeTime';
-import { MSEC_IN_HOUR, MSEC_IN_DAY, DateFormat, DurationFormat, FilterType, SortType } from './const.js';
+import {
+  MSEC_IN_HOUR,
+  MSEC_IN_DAY,
+  DateFormat,
+  DurationFormat,
+  FilterType,
+  SortType,
+  DESTINATIONS_NAMES_MAX_COUNT
+} from './const.js';
 
 dayjs.extend(duration);
 dayjs.extend(relativetime);
@@ -20,6 +28,7 @@ const getDuration = (dateStringFrom, dateStringTo) => dayjs.duration(getDatesDif
 
 const calculateDuration = (dateFrom, dateTo) => {
   const diff = getDatesDiff(dateFrom, dateTo);
+
   let pointDuration;
 
   switch (true) {
@@ -81,7 +90,7 @@ const sortByType = {
 const updateItem = (items, update) => items.map((item) => item.id === update.id ? update : item);
 const deleteItem = (items, del) => items.filter((item) => item.id !== del.id);
 
-const camelise = (string) => string.replace(/_([a-z])/g, (result) => result[1].toUpperCase());
+const convertSnakeCaseToCamelCase = (string) => string.replace(/_([a-z])/g, (result) => result[1].toUpperCase());
 const deepCamelise = (object) => {
   if (typeof object !== 'object' || object === null) {
     return object;
@@ -91,11 +100,54 @@ const deepCamelise = (object) => {
     return object.map(deepCamelise);
   }
 
-  const res = Object.fromEntries(Object.entries(object).map(([key, value]) => [camelise(key), deepCamelise(value)]));
+  const res = Object.fromEntries(Object.entries(object).map(([key, value]) => [convertSnakeCaseToCamelCase(key), deepCamelise(value)]));
   return res;
 };
 
-const mapApiPointData = (point) => deepCamelise(point);
+const convertCamelCaseToSnakeCase = (string) => string.replace(/[A-Z]/g, (result) => `_${result.toLowerCase()}`);
+const deepSnake = (object) => {
+  if (typeof object !== 'object' || object === null) {
+    return object;
+  }
+
+  if (Array.isArray(object)) {
+    return object.map(deepSnake);
+  }
+
+  const res = Object.fromEntries(Object.entries(object).map(([key, value]) => [convertCamelCaseToSnakeCase(key), deepSnake(value)]));
+  return res;
+};
+
+const getRouteLabel = (sortedPoints, destinations) => {
+  const pointsDestinations = sortedPoints
+    .map((point) => destinations.find((destination) => destination.id === point.destination)?.name);
+
+  if (pointsDestinations.length <= DESTINATIONS_NAMES_MAX_COUNT) {
+    return pointsDestinations.join(' &mdash; ');
+  }
+  return `${pointsDestinations.at(0)}&nbsp;&mdash;&nbsp;...&nbsp;&mdash;&nbsp;${pointsDestinations.at(-1)}`;
+};
+
+const getDurationPeriod = (sortedPoints) => {
+  if (!sortedPoints.length) {
+    return '';
+  }
+
+  const startDateTime = dayjs(sortedPoints[0].dateFrom).format(DateFormat.SHORT);
+  if (sortedPoints.length === 1) {
+    return startDateTime;
+  }
+
+  return `${startDateTime}&nbsp;&mdash;&nbsp;${dayjs(sortedPoints.at(-1).dateTo).format(DateFormat.SHORT)}`;
+};
+const getPointOffersCost = (pointOffersIds, offers) => pointOffersIds.reduce((offerCost, id) => offerCost + (offers.find((offer) => offer.id === id)?.price ?? 0), 0);
+const getTotalPointsCost = (points, offers) => points.reduce((total, point) => {
+  const typeOffers = offers.find((offer) => offer.type === point.type)?.offers ?? [];
+  return total + point.basePrice + getPointOffersCost(point.offers, typeOffers);
+}, 0);
+
+const mapApiDataToPoint = (data) => deepCamelise(data);
+const mapPointToApiData = (point) => deepSnake(point);
 
 export {
   getRandomArrayElement,
@@ -109,5 +161,9 @@ export {
   sortByType,
   updateItem,
   deleteItem,
-  mapApiPointData,
+  getRouteLabel,
+  getDurationPeriod,
+  getTotalPointsCost,
+  mapApiDataToPoint,
+  mapPointToApiData
 };

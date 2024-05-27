@@ -65,7 +65,7 @@ const POINT_DUMMY = {
   type: DEFAULT_EVENT_TYPE,
 };
 
-const REQUIRED_POINT_FIELDS = ['dateFrom', 'dateTo', 'destination', 'type'];
+const REQUIRED_POINT_FIELDS = ['dateFrom', 'dateTo', 'destination', 'type', 'basePrice'];
 
 const PointMode = {
   IDLE: 'IDLE',
@@ -161,6 +161,20 @@ const UpdateType = {
   INIT: 'INIT',
 };
 
+const UserAction = {
+  UPDATE_POINT: 'UPDATE_POINT',
+  DELETE_POINT: 'DELETE_POINT',
+  CREATE_POINT: 'CREATE_POINT',
+};
+
+const UiBlockerLimit = {
+  LOWER: 250,
+  UPPER: 1000,
+};
+
+const DESTINATIONS_NAMES_MAX_COUNT = 3;
+
+
 export {
   POINTS_COUNT,
   EVENT_TYPES,
@@ -187,4 +201,7 @@ export {
   API_HOST,
   HttpMethod,
   Endpoint,
+  UserAction,
+  UiBlockerLimit,
+  DESTINATIONS_NAMES_MAX_COUNT,
 };
