@@ -1,14 +1,7 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import relativetime from 'dayjs/plugin/relativeTime';
-import {
-  MSEC_IN_HOUR,
-  MSEC_IN_DAY,
-  DateFormat,
-  DurationFormat,
-  FilterType,
-  SortType
-} from './const.js';
+import { MSEC_IN_HOUR, MSEC_IN_DAY, DateFormat, DurationFormat, FilterType, SortType } from './const.js';
 
 dayjs.extend(duration);
 dayjs.extend(relativetime);
@@ -27,7 +20,6 @@ const getDuration = (dateStringFrom, dateStringTo) => dayjs.duration(getDatesDif
 
 const calculateDuration = (dateFrom, dateTo) => {
   const diff = getDatesDiff(dateFrom, dateTo);
-
   let pointDuration;
 
   switch (true) {
