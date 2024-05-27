@@ -33,8 +33,7 @@
     "node": "18"
   },
   "dependencies": {
-    "crypto-js": "4.2.0",
-    "dayjs": "1.11.6",
+    "dayjs": "1.11.9",
     "flatpickr": "4.6.13"
   }
 }

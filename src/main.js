@@ -1,41 +1,54 @@
-import Presenter from './presenter/presenter.js';
-import PointsModel from './model/point-model.js';
+import PointsModel from './model/points-model.js';
+import OffersModel from './model/offers-model.js';
+import DestinationsModel from './model/destinations-model.js';
+import RoutePresenter from './presenter/route-presenter.js';
+import FiltersPresenter from './presenter/filters-presenter.js';
+import TripInfoPresenter from './presenter/trip-info-presenter.js';
+import CreatePointPresenter from './presenter/create-point-presenter.js';
+import MainApiService from './service/main-api-service.js';
 import FiltersModel from './model/filters-model.js';
-import addPointButtonView from './view/add-point-button-view';
-import { render } from './framework/render';
 
-const pageBody = document.querySelector('.page-body');
-const mainContainer = pageBody.querySelector('.trip-events');
-const pointsContainer = pageBody.querySelector('.trip-events__list');
-const headerElement = pageBody.querySelector('.trip-controls');
+const apiService = new MainApiService();
 
-const points = new PointsModel();
-const filterModel = new FiltersModel();
+const pointsModel = new PointsModel(apiService);
+const offersModel = new OffersModel(apiService);
+const destinationsModel = new DestinationsModel(apiService);
+const filtersModel = new FiltersModel();
 
-const presenter = new Presenter(
-  {
-    controlsDiv: headerElement,
-    tripsSection: mainContainer,
-    pointsUl: pointsContainer,
-    filterModel: filterModel,
-    onAddTaskClose: handleNewPointFormClose,
-    pointsModel: points
-  }
-);
+const pointsContainer = document.querySelector('.trip-events');
+const filtersContainer = document.querySelector('.trip-controls__filters');
+const tripMainContainer = document.querySelector('.trip-main');
 
-const newTaskButtonComponent = new addPointButtonView({
-  onClick: handleAddPointButtonClick
+const createPointPresenter = new CreatePointPresenter({
+  container: tripMainContainer,
+  editorContainer: pointsContainer,
+  pointsModel,
+  offersModel,
+  destinationsModel,
 });
 
-function handleNewPointFormClose() {
-  newTaskButtonComponent.element.disabled = false;
-}
+const routePresenter = new RoutePresenter({
+  container: pointsContainer,
+  createPointPresenter,
+  pointsModel,
+  offersModel,
+  destinationsModel,
+  filtersModel,
+});
 
-function handleAddPointButtonClick() {
-  presenter.createPoint();
-  newTaskButtonComponent.element.disabled = true;
-}
+const filtersPresenter = new FiltersPresenter({ container: filtersContainer, pointsModel, filtersModel });
+const tripInfoPresenter = new TripInfoPresenter(tripMainContainer);
 
-render(newTaskButtonComponent, document.querySelector('.page-body__container'));
+const bootstrap = async () => {
+  await Promise.all([
+    offersModel.init(),
+    destinationsModel.init(),
+  ]);
+  pointsModel.init();
 
-presenter.init();
+  routePresenter.init();
+  filtersPresenter.init();
+  tripInfoPresenter.init();
+};
+
+bootstrap();
