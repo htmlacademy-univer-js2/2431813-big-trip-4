@@ -9,12 +9,8 @@ const createEventTypeTemplate = (types, currentType) =>
   types.reduce(
     (markup, type) => `${markup}
   <div class="event__type-item">
-    <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${
-  type === currentType ? 'checked' : ''
-}>
-    <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${toCapitalize(
-  type
-)}</label>
+    <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${type === currentType ? 'checked' : ''}>
+    <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${toCapitalize(type)}</label>
   </div>`,
     ''
   );
@@ -30,9 +26,7 @@ const createOffersTemplate = (offers, pointOffers) => {
   const items = offers.reduce(
     (markup, { id, title, price }) => `${markup}
     <div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="${id}" type="checkbox" name="event-offer-${id}" ${
-  pointOffers.find((offer) => offer === id) ? 'checked' : ''
-}>
+      <input class="event__offer-checkbox  visually-hidden" id="${id}" type="checkbox" name="event-offer-${id}" ${pointOffers.find((offer) => offer === id) ? 'checked' : ''}>
       <label class="event__offer-label" for="${id}">
         <span class="event__offer-title">${title}</span>
         &plus;&euro;&nbsp;
@@ -98,6 +92,7 @@ const createButtonsTemplate = (mode, isDeleting) => {
 
 function createPointEditorTemplate({ point, pointDestination, destinations, pointOffers, mode, isValid, isCreating, isDeleting, isUpdating }) {
   const { type, basePrice, dateFrom, dateTo, offers } = point;
+  const isRenderDescription = pointDestination?.description || pointDestination?.pictures.length;
   return `<li class="trip-events__item">
       <form class="event event--edit" action="#" method="post" >
         <header class="event__header">
@@ -152,10 +147,10 @@ function createPointEditorTemplate({ point, pointDestination, destinations, poin
           <button class="event__save-btn  btn  btn--blue" type="submit" ${(isCreating || isDeleting || isUpdating || !isValid) ? 'disabled' : ''}>${(isCreating || isUpdating) ? 'Saving...' : 'Save'}</button>
           ${createButtonsTemplate(mode, isDeleting)}
         </header>
-        <section class="event__details">
-          ${createOffersTemplate(pointOffers, offers)}
-          ${pointDestination ? createDestinationTemplate(pointDestination) : ''}
-        </section>
+        ${!isRenderDescription && !pointOffers.length ? '' : `<section class="event__details">
+        ${createOffersTemplate(pointOffers, offers)}
+        ${!pointDestination?.pictures.length || !pointDestination?.description ? '' : createDestinationTemplate(pointDestination)}
+      </section>`}
       </form>
     </li>`;
 }

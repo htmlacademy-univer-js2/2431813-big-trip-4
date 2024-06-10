@@ -5,7 +5,7 @@ const createCreatePointButtonTemplate = (disabled) => `<button class="trip-main_
 export default class CreatePointButtonView extends AbstractStatefulView {
   #handleButtonClick = null;
 
-  constructor({ onClick, disabled = false}) {
+  constructor({ onClick, disabled = false }) {
     super();
     this.#handleButtonClick = onClick;
     this._setState({ disabled });

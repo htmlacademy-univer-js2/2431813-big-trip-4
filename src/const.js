@@ -5,10 +5,6 @@ const HOUR_IN_DAY = 24;
 const MSEC_IN_HOUR = MSEC_IN_SEC * SEC_IN_MIN * MIN_IN_HOUR;
 const MSEC_IN_DAY = MSEC_IN_HOUR * HOUR_IN_DAY;
 
-const POINTS_COUNT = 5;
-const MAX_PRICE_VALUE = 200;
-const MAX_IMAGES_COUNT = 5;
-
 const AUTH_TOKEN = 'Basic dXNlckBwYXNzd29yZAo=';
 const API_HOST = 'https://21.objects.htmlacademy.pro/big-trip';
 
@@ -35,22 +31,6 @@ const EVENT_TYPES = [
   'check-in',
   'sightseeing',
   'restaurant',
-];
-const CITIES = [
-  'Paris',
-  'London',
-  'Chicago',
-  'Tokio',
-  'New York',
-  'Moscow',
-  'Amsterdam',
-  'San-Francisco',
-];
-const DESCRIPTIONS = [
-  'Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt architecto labore atque!',
-  'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Voluptatem exercitationem culpa, molestias qui eveniet corrupti?',
-  'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Eius, dolorem.',
-  'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Odit ad eaque cupiditate praesentium maxime.',
 ];
 
 const DEFAULT_EVENT_TYPE = 'flight';
@@ -93,9 +73,7 @@ const SortType = {
 };
 
 const FilterSettings = {
-  [FilterType.ANY]: {
-    label: 'Everything',
-  },
+  [FilterType.ANY]: { label: 'Everything' },
   [FilterType.FUTURE]: { label: 'Future' },
   [FilterType.PRESENT]: { label: 'Present' },
   [FilterType.PAST]: { label: 'Past' },
@@ -144,16 +122,6 @@ const DurationFormat = {
   MINS: 'mm[M]',
 };
 
-const Price = {
-  MIN: 1,
-  MAX: 500,
-};
-
-const MocksMaxCount = {
-  OFFERS: 7,
-  POINTS: 5,
-};
-
 const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
@@ -174,14 +142,8 @@ const UiBlockerLimit = {
 
 const DESTINATIONS_NAMES_MAX_COUNT = 3;
 
-
 export {
-  POINTS_COUNT,
   EVENT_TYPES,
-  MAX_PRICE_VALUE,
-  MAX_IMAGES_COUNT,
-  CITIES,
-  DESCRIPTIONS,
   SORTING_COLUMNS,
   POINT_DUMMY,
   REQUIRED_POINT_FIELDS,
@@ -192,8 +154,6 @@ export {
   SortType,
   DateFormat,
   DurationFormat,
-  Price,
-  MocksMaxCount,
   MSEC_IN_HOUR,
   MSEC_IN_DAY,
   UpdateType,

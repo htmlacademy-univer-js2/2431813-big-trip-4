@@ -15,7 +15,7 @@ export default class TripInfoPresenter {
   #offersModel = null;
   #tripInfoComponent = null;
 
-  constructor({container, pointsModel, destinationsModel, offersModel}) {
+  constructor({ container, pointsModel, destinationsModel, offersModel }) {
     this.#container = container;
     this.#pointsModel = pointsModel;
     this.#destinationsModel = destinationsModel;
@@ -27,19 +27,17 @@ export default class TripInfoPresenter {
   init() {
     this.#tripInfoComponent = new TripInfoView(this.#getTripInfoProps());
     render(this.#tripInfoComponent, this.#container, RenderPosition.AFTERBEGIN);
-
   }
 
   #updateInfo() {
     const prevTripInfoComponent = this.#tripInfoComponent;
     this.#tripInfoComponent = new TripInfoView(this.#getTripInfoProps());
 
-    if(!prevTripInfoComponent) {
+    if (!prevTripInfoComponent) {
       throw new Error('TripInfoPresenter: presenter not initialized!');
     }
 
     replace(this.#tripInfoComponent, prevTripInfoComponent);
-
   }
 
   #getTripInfoProps() {

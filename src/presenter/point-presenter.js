@@ -2,6 +2,7 @@ import { remove, render, replace } from '../framework/render.js';
 import PointView from '../view/point-view.js';
 import PointEditorView from '../view/point-editor-view.js';
 import { EditType, PointMode, UserAction } from '../const.js';
+import { isEsc } from '../utils.js';
 
 export default class PointPresenter {
   #container = null;
@@ -72,7 +73,7 @@ export default class PointPresenter {
   }
 
   triggerError() {
-    if(this.#mode !== PointMode.EDITABLE) {
+    if (this.#mode !== PointMode.EDITABLE) {
       this.#pointComponent.shake();
       return;
     }
@@ -118,7 +119,7 @@ export default class PointPresenter {
   }
 
   #escKeyDownHandler = (evt) => {
-    if (evt.key === 'Escape') {
+    if (isEsc(evt)) {
       evt.preventDefault();
       this.#replaceEditorByPoint();
     }

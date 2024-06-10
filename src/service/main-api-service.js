@@ -8,25 +8,22 @@ import {
 
 
 export default class MainApiService extends ApiService {
-  _defaultHeaders = new Headers({'Content-Type': 'application/json'});
-
-
   constructor() {
     super(API_HOST, AUTH_TOKEN);
   }
 
   get points() {
-    return this._load({url: Endpoint.POINTS})
+    return this._load({ url: Endpoint.POINTS })
       .then(ApiService.parseResponse);
   }
 
   get destinations() {
-    return this._load({url: Endpoint.DESTINATIONS})
+    return this._load({ url: Endpoint.DESTINATIONS })
       .then(ApiService.parseResponse);
   }
 
   get offers() {
-    return this._load({url: Endpoint.OFFERS})
+    return this._load({ url: Endpoint.OFFERS })
       .then(ApiService.parseResponse);
   }
 
@@ -35,7 +32,7 @@ export default class MainApiService extends ApiService {
       url: Endpoint.POINTS,
       method: HttpMethod.POST,
       body: JSON.stringify(point),
-      headers: this._defaultHeaders,
+      headers: new Headers({ 'Content-Type': 'application/json' }),
     });
 
     const parsedResponse = await ApiService.parseResponse(response);
@@ -47,7 +44,7 @@ export default class MainApiService extends ApiService {
       url: `${Endpoint.POINTS}/${point.id}`,
       method: HttpMethod.PUT,
       body: JSON.stringify(point),
-      headers: this._defaultHeaders,
+      headers: new Headers({ 'Content-Type': 'application/json' }),
     });
 
     const parsedResponse = await ApiService.parseResponse(response);
