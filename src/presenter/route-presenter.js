@@ -1,39 +1,47 @@
 import {
+  RenderPosition,
   remove,
   render,
 } from '../framework/render.js';
-import EventsListView from '../view/events-list-view.js';
 import EventsListEmptyView from '../view/events-list-empty-view.js';
-import { SORTING_COLUMNS, SortType, UiBlockerLimit, UpdateType, UserAction } from '../const.js';
+import { SORTING_COLUMNS, SortType, UiBlockerLimit, UpdateType, UserAction, FilterType } from '../const.js';
 import PointPresenter from './point-presenter.js';
 import { filterByType, sortByType } from '../utils.js';
 import SortingView from '../view/sorting-view.js';
 import LoaderView from '../view/loader-view.js';
+import ErrorView from '../view/error-view.js';
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
-
 
 export default class RoutePresenter {
   #container = null;
+  #loaderComponent = new LoaderView();
+  #errorComponent = new ErrorView();
+  #emptyListComponent = null;
+  #listComponent = null;
+  #sortingComponent = null;
+
   #createPointPresenter = null;
+  #pointsPresenters = new Map();
+
   #pointsModel = null;
   #destinationsModel = null;
   #offersModel = null;
   #filtersModel = null;
+
   #currentSortType = SortType.DAY;
-  #loaderComponent = new LoaderView();
-  #listComponent = new EventsListView();
+  #filterType = FilterType.ANY;
+
   #uiBlocker = new UiBlocker({
     lowerLimit: UiBlockerLimit.LOWER,
     upperLimit: UiBlockerLimit.UPPER,
   });
 
-  #sortingComponent = null;
-  #pointsPresenters = new Map();
   #isLoading = true;
   #isError = false;
 
   constructor({
     container,
+    pointsContainer,
     createPointPresenter,
     pointsModel,
     offersModel,
@@ -41,6 +49,7 @@ export default class RoutePresenter {
     filtersModel,
   }) {
     this.#container = container;
+    this.#listComponent = pointsContainer;
     this.#createPointPresenter = createPointPresenter;
     this.#pointsModel = pointsModel;
     this.#offersModel = offersModel;
@@ -52,9 +61,9 @@ export default class RoutePresenter {
   }
 
   get points() {
+    this.#filterType = this.#filtersModel.get();
     const points = this.#pointsModel.get();
-    const filterType = this.#filtersModel.get();
-    const filteredPoints = filterByType[filterType](points);
+    const filteredPoints = filterByType[this.#filterType](points);
 
     return sortByType[this.#currentSortType](filteredPoints);
   }
@@ -66,7 +75,6 @@ export default class RoutePresenter {
 
   destroy() {
     remove(this.#sortingComponent);
-    remove(this.#listComponent);
     this.#clearRoute();
   }
 
@@ -74,8 +82,15 @@ export default class RoutePresenter {
     render(this.#loaderComponent, this.#container);
   }
 
+  #renderError() {
+    render(this.#errorComponent, this.#container);
+  }
+
   #renderStub() {
-    render(new EventsListEmptyView(), this.#container);
+    this.#emptyListComponent = new EventsListEmptyView({
+      filterType: this.#filterType
+    });
+    render(this.#emptyListComponent, this.#container);
   }
 
   #renderSort() {
@@ -85,10 +100,16 @@ export default class RoutePresenter {
       onSortChange: this.#sortChangeHandler,
     });
 
-    render(this.#sortingComponent, this.#container);
+    render(this.#sortingComponent, this.#container, RenderPosition.AFTERBEGIN);
   }
 
   #renderRoute() {
+    if (this.#isError) {
+      this.#createPointPresenter.setButtonDisabled(true);
+      this.#renderError();
+      return;
+    }
+
     if (this.#isLoading) {
       this.#createPointPresenter.setButtonDisabled(true);
       this.#renderLoader();
@@ -106,8 +127,6 @@ export default class RoutePresenter {
   }
 
   #renderPoints() {
-    render(this.#listComponent, this.#container);
-
     this.points.forEach((point) => {
       this.#renderPoint(point);
     });
@@ -116,12 +135,15 @@ export default class RoutePresenter {
   #clearRoute() {
     this.#pointsPresenters.forEach((presenter) => presenter.destroy());
     this.#pointsPresenters.clear();
+    remove(this.#emptyListComponent);
     remove(this.#sortingComponent);
+    remove(this.#loaderComponent);
+    remove(this.#errorComponent);
   }
 
   #renderPoint(point) {
     const pointPresenter = new PointPresenter({
-      container: this.#listComponent.element,
+      container: this.#listComponent,
       destinationsModel: this.#destinationsModel,
       offersModel: this.#offersModel,
       onUserAction: this.#userActionHandler,
@@ -163,8 +185,11 @@ export default class RoutePresenter {
     this.#uiBlocker.unblock();
   };
 
-  #createPointHandler = (data) =>
-    this.#pointsModel.create(UpdateType.MAJOR, data);
+  async #createPointHandler(data) {
+    this.#currentSortType = SortType.DAY;
+    this.#filtersModel.set(UpdateType.MAJOR, FilterType.ANY);
+    await this.#pointsModel.create(UpdateType.MAJOR, data);
+  }
 
   #updatePointHandler = (data) =>
     this.#pointsModel.update(UpdateType.MINOR, data);
@@ -185,6 +210,9 @@ export default class RoutePresenter {
 
   #pointsModelEventHandler = (type, data) => {
     if (this.#isError || data?.error) {
+      this.#isError = true;
+      this.#clearRoute();
+      this.#renderRoute();
       return;
     }
 
@@ -192,6 +220,7 @@ export default class RoutePresenter {
       case UpdateType.INIT:
         this.#isLoading = false;
         remove(this.#loaderComponent);
+        this.#clearRoute();
         this.#renderRoute();
         break;
 

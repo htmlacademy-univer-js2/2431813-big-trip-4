@@ -34,7 +34,7 @@ export default class PointsModel extends Observable {
       const createdPoint = mapApiDataToPoint(response);
       this.#points.push(createdPoint);
       this._notify(type, createdPoint);
-    } catch(error) {
+    } catch (error) {
       this._notify(type, { error });
       throw new Error(`PointsModel - failed to create point: ${error}`);
     }
@@ -46,7 +46,7 @@ export default class PointsModel extends Observable {
       const updatedPoint = mapApiDataToPoint(response);
       this.#points = updateItem(this.#points, updatedPoint);
       this._notify(type, updatedPoint);
-    } catch(error) {
+    } catch (error) {
       this._notify(type, { error });
       throw new Error(`PointsModel - failed to update point: ${error}`);
     }
@@ -57,7 +57,7 @@ export default class PointsModel extends Observable {
       await this.#service.deletePoint(point);
       this.#points = deleteItem(this.#points, point);
       this._notify(type);
-    } catch(error) {
+    } catch (error) {
       this._notify(type, { error });
       throw new Error(`PointsModel - failed to delete point: ${error}`);
     }

@@ -15,7 +15,8 @@ const offersModel = new OffersModel(apiService);
 const destinationsModel = new DestinationsModel(apiService);
 const filtersModel = new FiltersModel();
 
-const pointsContainer = document.querySelector('.trip-events');
+const routeContainer = document.querySelector('.trip-events');
+const pointsContainer = document.querySelector('.trip-events__list');
 const filtersContainer = document.querySelector('.trip-controls__filters');
 const tripMainContainer = document.querySelector('.trip-main');
 
@@ -34,7 +35,8 @@ const createPointPresenter = new CreatePointPresenter({
 });
 
 const routePresenter = new RoutePresenter({
-  container: pointsContainer,
+  container: routeContainer,
+  pointsContainer,
   createPointPresenter,
   pointsModel,
   offersModel,
@@ -44,7 +46,7 @@ const routePresenter = new RoutePresenter({
 
 const filtersPresenter = new FiltersPresenter({ container: filtersContainer, pointsModel, filtersModel });
 
-const bootstrap = async () => {
+const init = async () => {
   await Promise.all([
     offersModel.init(),
     destinationsModel.init(),
@@ -56,4 +58,4 @@ const bootstrap = async () => {
   tripInfoPresenter.init();
 };
 
-bootstrap();
+init();

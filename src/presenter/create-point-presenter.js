@@ -6,6 +6,7 @@ import {
 } from '../framework/render.js';
 import CreatePointButtonView from '../view/create-point-button-view.js';
 import PointEditorView from '../view/point-editor-view.js';
+import { isEsc } from '../utils.js';
 
 export default class CreatePointPresenter {
   #container = null;
@@ -84,7 +85,7 @@ export default class CreatePointPresenter {
   };
 
   #escKeyDownHandler = (evt) => {
-    if (evt.key === 'Escape') {
+    if (isEsc(evt)) {
       evt.preventDefault();
       this.resetView();
     }

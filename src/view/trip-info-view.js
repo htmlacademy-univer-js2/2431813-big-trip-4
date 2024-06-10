@@ -17,7 +17,7 @@ const createTripInfoDummyTemplate = (isLoading) => `
     </p>
   </section>`;
 
-const createTripInfoTemplate = ({isEmpty, isLoading, routeLabel, periodLabel, cost}) => isEmpty
+const createTripInfoTemplate = ({ isEmpty, isLoading, routeLabel, periodLabel, cost }) => isEmpty
   ? createTripInfoDummyTemplate(isLoading)
   : `<section class="trip-main__trip-info trip-info">
     <div class="trip-info__main">

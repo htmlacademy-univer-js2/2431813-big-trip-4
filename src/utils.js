@@ -14,13 +14,6 @@ import {
 dayjs.extend(duration);
 dayjs.extend(relativetime);
 
-const getRandomArrayElement = (items) => items[Math.floor(Math.random() * items.length)];
-const getRandomPositiveNumber = (min = 0, max = 1) => {
-  const lower = Math.ceil(Math.min(min, max));
-  const upper = Math.floor(Math.max(min, max));
-  return Math.floor(lower + Math.random() * (upper - lower + 1));
-};
-const getRandomDate = (start = new Date(2023, 3, 1), end = new Date(2023, 4, 1)) => new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
 const formatDate = (currentDate, format = DateFormat.FULL) => dayjs(currentDate).format(format);
 
 const getDatesDiff = (dateStringFrom, dateStringTo) => dayjs(dateStringTo).diff(dayjs(dateStringFrom));
@@ -46,13 +39,6 @@ const calculateDuration = (dateFrom, dateTo) => {
   return pointDuration;
 };
 
-const incrementCounter = (START_FROM) => {
-  let counterStart = START_FROM;
-  return function() {
-    return counterStart++;
-  };
-};
-
 const toCapitalize = (str) => `${str[0].toUpperCase()}${str.slice(1)}`;
 
 const isPointFuture = (point) => dayjs().isBefore(point.dateFrom);
@@ -65,7 +51,6 @@ const filterByType = {
   [FilterType.PRESENT]: (points) => points.filter((point) => isPointPresent(point)),
   [FilterType.PAST]: (points) => points.filter((point) => isPointPast(point))
 };
-
 
 const sortPointsByDate = (pointA, pointB) => getDatesDiff(pointB.dateFrom, pointA.dateFrom);
 const sortPointsByTime = (pointA, pointB) => {
@@ -148,14 +133,11 @@ const getTotalPointsCost = (points, offers) => points.reduce((total, point) => {
 
 const mapApiDataToPoint = (data) => deepCamelise(data);
 const mapPointToApiData = (point) => deepSnake(point);
+const isEsc = (evt) => evt.key === 'Escape';
 
 export {
-  getRandomArrayElement,
-  getRandomPositiveNumber,
-  getRandomDate,
   formatDate,
   calculateDuration,
-  incrementCounter,
   toCapitalize,
   filterByType,
   sortByType,
@@ -165,5 +147,6 @@ export {
   getDurationPeriod,
   getTotalPointsCost,
   mapApiDataToPoint,
-  mapPointToApiData
+  mapPointToApiData,
+  isEsc
 };
